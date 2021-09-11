@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import EmployeeService from '../services/EmployeeService';
+import EtudiantService from '../../services/EtudiantService';
 
-class CreateEmployeeComponent extends Component {
+class CreateEtudiantComponent extends Component {
     constructor(props) {
         super(props)
 
@@ -10,11 +10,12 @@ class CreateEmployeeComponent extends Component {
             id: this.props.match.params.id,
             firstName: '',
             lastName: '',
-            emailId: ''
+            emailId: '',
+            cne: ''
         }
         this.changeFirstNameHandler = this.changeFirstNameHandler.bind(this);
         this.changeLastNameHandler = this.changeLastNameHandler.bind(this);
-        this.saveOrUpdateEmployee = this.saveOrUpdateEmployee.bind(this);
+        this.saveOrUpdateEtudiant = this.saveOrUpdateEtudiant.bind(this);
     }
 
     // step 3
@@ -24,28 +25,29 @@ class CreateEmployeeComponent extends Component {
         if(this.state.id === '_add'){
             return
         }else{
-            EmployeeService.getEmployeeById(this.state.id).then( (res) =>{
-                let employee = res.data;
-                this.setState({firstName: employee.firstName,
-                    lastName: employee.lastName,
-                    emailId : employee.emailId
+            EtudiantService.getEtudiantById(this.state.id).then( (res) =>{
+                let etudiant = res.data;
+                this.setState({firstName: etudiant.firstName,
+                    lastName : etudiant.lastName,
+                    emailId : etudiant.emailId,
+                    cne : etudiant.cne
                 });
             });
         }        
     }
-    saveOrUpdateEmployee = (e) => {
+    saveOrUpdateEtudiant = (e) => {
         e.preventDefault();
-        let employee = {firstName: this.state.firstName, lastName: this.state.lastName, emailId: this.state.emailId};
-        console.log('employee => ' + JSON.stringify(employee));
+        let etudiant = {firstName: this.state.firstName, lastName: this.state.lastName, emailId: this.state.emailId, cne: this.state.cne};
+        console.log('etudiant => ' + JSON.stringify(etudiant));
 
         // step 5
         if(this.state.id === '_add'){
-            EmployeeService.createEmployee(employee).then(res =>{
-                this.props.history.push('/employees');
+            EtudiantService.createEtudiant(etudiant).then(res =>{
+                this.props.history.push('/etudiants');
             });
         }else{
-            EmployeeService.updateEmployee(employee, this.state.id).then( res => {
-                this.props.history.push('/employees');
+            EtudiantService.updateEtudiant(etudiant, this.state.id).then( res => {
+                this.props.history.push('/etudiants');
             });
         }
     }
@@ -62,15 +64,19 @@ class CreateEmployeeComponent extends Component {
         this.setState({emailId: event.target.value});
     }
 
+    changeCneHandler= (event) => {
+        this.setState({cne: event.target.value});
+    }
+
     cancel(){
-        this.props.history.push('/employees');
+        this.props.history.push('/etudiants');
     }
 
     getTitle(){
         if(this.state.id === '_add'){
-            return <h3 className="text-center">Add Employee</h3>
+            return <h3 className="text-center">Add Etudiant</h3>
         }else{
-            return <h3 className="text-center">Update Employee</h3>
+            return <h3 className="text-center">Update Etudiant</h3>
         }
     }
     render() {
@@ -100,8 +106,13 @@ class CreateEmployeeComponent extends Component {
                                             <input placeholder="Email Address" name="emailId" className="form-control" 
                                                 value={this.state.emailId} onChange={this.changeEmailHandler}/>
                                         </div>
+                                        <div className = "form-group">
+                                            <label> Cne: </label>
+                                            <input placeholder="Cne" name="cne" className="form-control" 
+                                                value={this.state.cne} onChange={this.changeCneHandler}/>
+                                        </div>
 
-                                        <button className="btn btn-success" onClick={this.saveOrUpdateEmployee}>Save</button>
+                                        <button className="btn btn-success" onClick={this.saveOrUpdateEtudiant}>Save</button>
                                         <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>Cancel</button>
                                     </form>
                                 </div>
@@ -114,4 +125,4 @@ class CreateEmployeeComponent extends Component {
     }
 }
 
-export default CreateEmployeeComponent
+export default CreateEtudiantComponent
